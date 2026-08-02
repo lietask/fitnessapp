@@ -33,6 +33,8 @@ with st.form('log workout'):
         st.dataframe(df.iloc[len(df)-sets:])
         df.to_csv("workouts.csv", index=True)
 
+
+st.header("Select an exercise to view or a date")
 unique_exercises = df['ex_name'].unique().tolist()
 options = ['All'] + unique_exercises
 selected = st.selectbox(options[0], options)
@@ -49,3 +51,34 @@ if date_range and len(date_range) == 2:
         (pd.to_datetime(filtered_df['date']).dt.date <= end_date)
     ]
     st.dataframe(filtered_df)
+
+st.header("Caloric calc for later predictions")
+with st.form('Log your caloric intake'):
+    date = st.date_input("Date of your caloric intake")
+    calories = st.number_input("Calories")
+    protein = st.number_input("Protein")
+    carbs = st.number_input("Carbohydrates")
+    fats = st.number_input("Fats")
+
+    submitted = st.form_submit_button(label='Submit')
+    if submitted:
+        dfcal = pd.read_csv('nutrition.csv', index_col='index', parse_dates=True)
+        dfcal.loc[len(dfcal)] = {'Date': date, 'Calories': calories, 'Protein': protein, 'Carbs': carbs, 'Fats': fats}
+        dfcal.to_csv('nutrition.csv', index=True)
+
+st.header("Sleeper stats")
+
+with st.form('Sleep stats in minutes'):
+    date = st.date_input("Date of your sleep stats")
+    time_asleep = st.number_input("Time asleep")
+    awake = st.number_input("Awake")
+    rem = st.number_input("REM")
+    core = st.number_input("Core")
+    deep = st.number_input("Deep")
+    sleep_score = st.number_input("Sleep score")
+    submitted = st.form_submit_button(label='Submit')
+
+    if submitted:
+        dfcal = pd.read_csv('nutrition.csv', index_col='index', parse_dates=True)
+        dfcal.loc[date] = {'Date': date, 'Time Asleep': time_asleep, 'Awake': awake, 'REM': rem, 'Core': core, 'Deep': deep, 'Sleep Score': sleep_score}
+        dfcal.to_csv('nutrition.csv', index=True)
