@@ -2,6 +2,17 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 import datetime as dt
+import os as os
+
+
+DAILY_CSV = 'daily_logs.csv'
+if os.path.exists(DAILY_CSV):
+    df_daily = pd.read_csv(DAILY_CSV, index_col='Date')
+else:
+    df_daily = pd.DataFrame(columns=['Calories', 'Protein', 'Carbs', 'Fats',
+                                     'Time_asleep', 'Awake', 'REM', 'Core',
+                                     'Deep', 'Sleep_score'])
+    df_daily.index.name = 'Date'
 
 df = pd.read_csv("workouts.csv", index_col='index', parse_dates=True)
 st.title("My Gym Tracker")
@@ -62,9 +73,12 @@ with st.form('Log your caloric intake'):
 
     submitted = st.form_submit_button(label='Submit')
     if submitted:
-        dfcal = pd.read_csv('nutrition.csv', index_col='index', parse_dates=True)
-        dfcal.loc[len(dfcal)] = {'Date': date, 'Calories': calories, 'Protein': protein, 'Carbs': carbs, 'Fats': fats}
-        dfcal.to_csv('nutrition.csv', index=True)
+        date_str = str(date)
+        df_daily.loc[date_str, ['Calories', 'Protein', 'Carbs', 'Fats']] = [
+            calories, protein, carbs, fats
+        ]
+        df_daily.to_csv(DAILY_CSV, index=True)
+        st.success(f"Logged nutrition for {date_str}!")
 
 st.header("Sleeper stats")
 
@@ -79,6 +93,12 @@ with st.form('Sleep stats in minutes'):
     submitted = st.form_submit_button(label='Submit')
 
     if submitted:
-        dfcal = pd.read_csv('nutrition.csv', index_col='index', parse_dates=True)
-        dfcal.loc[date] = {'Date': date, 'Time Asleep': time_asleep, 'Awake': awake, 'REM': rem, 'Core': core, 'Deep': deep, 'Sleep Score': sleep_score}
-        dfcal.to_csv('nutrition.csv', index=True)
+        date_str = str(date)
+        df_daily.loc[date_str, ['Time_asleep', 'Awake', 'REM', 'Core', 'Deep', 'Sleep_score']] = [
+            time_asleep, awake, rem, core, deep, sleep_score
+        ]
+        df_daily.to_csv(DAILY_CSV, index=True)
+        st.success(f"Logged sleep for {date_str}!")
+
+st.subheader("Daily Health Summary")
+st.dataframe(df_daily)
