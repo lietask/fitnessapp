@@ -1,12 +1,14 @@
 import numpy as np
 import pandas as pd
 import streamlit as st
+import datetime as dt
 
+df = pd.read_csv("workouts.csv", index_col='index', parse_dates=True)
 st.title("My Gym Tracker")
+
 
 sets = st.selectbox("Number of sets", [0, 1, 2, 3, 4, 5])
 with st.form('log workout'):
-    df = pd.read_csv("workouts.csv", index_col='index', parse_dates=True)
     ex_name = st.text_input("Exercise name")
     date = st.date_input("Date of exercise")
 
@@ -29,4 +31,21 @@ with st.form('log workout'):
             df.loc[len(df)-1, 'weight'] = collection_sets[i][0]
             df.loc[len(df)-1, 'reps'] = collection_sets[i][1]
         st.dataframe(df.iloc[len(df)-sets:])
-        df.to_csv("workouts.csv", index=False)
+        df.to_csv("workouts.csv", index=True)
+
+unique_exercises = df['ex_name'].unique().tolist()
+options = ['All'] + unique_exercises
+selected = st.selectbox(options[0], options)
+if selected != 'All':
+    filtered_df = df[df['ex_name'] == selected]
+else:
+    filtered_df = df
+date_range = st.date_input("Date range", value=[])
+
+if date_range and len(date_range) == 2:
+    start_date, end_date = date_range
+    filtered_df = filtered_df[
+        (pd.to_datetime(filtered_df['date']).dt.date >= start_date) &
+        (pd.to_datetime(filtered_df['date']).dt.date <= end_date)
+    ]
+    st.dataframe(filtered_df)
