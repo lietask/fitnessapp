@@ -3,12 +3,13 @@ import pandas as pd
 import streamlit as st
 import datetime as dt
 import os as os
-
+import matplotlib.pyplot as plt
 
 DAILY_CSV = 'daily_logs.csv'
 if os.path.exists(DAILY_CSV):
     df_daily = pd.read_csv(DAILY_CSV, index_col='Date')
 else:
+    # noinspection PyTypeChecker
     df_daily = pd.DataFrame(columns=['Calories', 'Protein', 'Carbs', 'Fats',
                                      'Time_asleep', 'Awake', 'REM', 'Core',
                                      'Deep', 'Sleep_score'])
@@ -102,3 +103,21 @@ with st.form('Sleep stats in minutes'):
 
 st.subheader("Daily Health Summary")
 st.dataframe(df_daily)
+
+selection = st.selectbox('Select a chart:', ['Progression overload curve', 'Consistency heatmap'])
+
+if selection == 'Progression overload curve':
+    exercise_selection = st.selectbox("Select an exercise", unique_exercises)
+    exercise_df = df[df['ex_name'] == exercise_selection].copy()
+    exercise_df['e1RM'] = exercise_df['weight'] * (1 + (exercise_df['reps'] / 30))
+    output_df = exercise_df.groupby('date')['e1RM'].max().reset_index()
+    output_df['date'] = pd.to_datetime(output_df['date'])
+
+    x = output_df['date']
+    y = output_df['e1RM']
+    fig, ax = plt.subplots()
+    ax.plot(x, y, 'o-', label = 'Estimated 1 rep max over time. Progression overload curve.')
+    st.pyplot(fig)
+
+# elif selection == 'Consistency heatmap':
+#
