@@ -5,6 +5,7 @@ import datetime as dt
 import os as os
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+from streamlit import success
 
 DAILY_CSV = 'daily_logs.csv'
 if os.path.exists(DAILY_CSV):
@@ -39,11 +40,19 @@ with st.form('log workout'):
     submitted = st.form_submit_button(label='Submit')
 
     if submitted:
+        congrats = False
         for i in range(sets):
             df.loc[len(df)] = {"ex_name": ex_name, "date": date, "SiaR": i+1}
             df.loc[len(df)-1, 'weight'] = collection_sets[i][0]
             df.loc[len(df)-1, 'reps'] = collection_sets[i][1]
-        st.dataframe(df.iloc[len(df)-sets:])
+            if df.loc[len(df)-1, 'weight'] == df['weight'].groupby(df['ex_name']).max().loc[ex_name]:
+                df.loc[len(df)-1, 'pr'] = 'PR'
+                congrats = True
+            else:
+                df.loc[len(df)-1, 'pr'] = 'Not a PR'
+        if congrats:
+            st.write(f"Congratulations on hitting PR on {ex_name}!")
+        st.dataframe(df.drop(columns=['pr']).iloc[len(df)-sets:])
         df.to_csv("workouts.csv", index=True)
 
 
