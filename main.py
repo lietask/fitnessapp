@@ -4,6 +4,7 @@ import streamlit as st
 import datetime as dt
 import os as os
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 
 DAILY_CSV = 'daily_logs.csv'
 if os.path.exists(DAILY_CSV):
@@ -104,7 +105,7 @@ with st.form('Sleep stats in minutes'):
 st.subheader("Daily Health Summary")
 st.dataframe(df_daily)
 
-selection = st.selectbox('Select a chart:', ['Progression overload curve', 'Consistency heatmap'])
+selection = st.selectbox("Select a visualization", ['Consistency heatmap', 'Progression overload curve'])
 
 if selection == 'Progression overload curve':
     exercise_selection = st.selectbox("Select an exercise", unique_exercises)
@@ -119,5 +120,60 @@ if selection == 'Progression overload curve':
     ax.plot(x, y, 'o-', label = 'Estimated 1 rep max over time. Progression overload curve.')
     st.pyplot(fig)
 
-# elif selection == 'Consistency heatmap':
-#
+elif selection == 'Consistency heatmap':
+    df['date_dt'] = pd.to_datetime(df['date'])
+    available_years = sorted(df['date_dt'].dt.year.unique().tolist(), reverse=True)
+    
+    selected_year = st.selectbox("Select Year:", available_years if available_years else [dt.datetime.now().year])
+
+    heatmap_df = df[df['date_dt'].dt.year == selected_year]
+    workout_days = set(heatmap_df['date_dt'].dt.normalize())
+
+    start_date = pd.Timestamp(f'{selected_year}-01-01')
+    end_date = pd.Timestamp(f'{selected_year}-12-31')
+    year_dates = pd.date_range(start_date, end_date, freq='D')
+
+    first_monday = start_date - pd.Timedelta(days=start_date.dayofweek)
+    num_weeks = ((end_date - first_monday).days // 7) + 1
+
+    grid = np.full((7, num_weeks), np.nan)
+
+    for d in year_dates:
+        day_of_week = d.dayofweek
+        week_idx = (d - first_monday).days // 7
+        grid[day_of_week, week_idx] = 1 if d in workout_days else 0
+
+    month_ticks = []
+    month_labels = []
+    for month in range(1, 13):
+        m_date = pd.Timestamp(f'{selected_year}-{month:02d}-01')
+        w_idx = (m_date - first_monday).days // 7
+        month_ticks.append(w_idx)
+        month_labels.append(m_date.strftime('%b'))
+
+    fig, ax = plt.subplots(figsize=(15, 2.5))
+
+    cmap = mcolors.ListedColormap(['#ebedf0', '#30a14e'])
+    cmap.set_bad(color='#ffffff')
+
+    grid_masked = np.ma.masked_invalid(grid)
+    im = ax.imshow(grid_masked, cmap=cmap, vmin=0, vmax=1, aspect='equal')
+
+    ax.set_xticks(month_ticks)
+    ax.set_xticklabels(month_labels, fontsize=10)
+    ax.set_yticks(range(7))
+    ax.set_yticklabels(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], fontsize=9)
+
+    ax.set_xticks(np.arange(num_weeks + 1) - 0.5, minor=True)
+    ax.set_yticks(np.arange(8) - 0.5, minor=True)
+    ax.grid(which='minor', color='white', linestyle='-', linewidth=2)
+    ax.tick_params(which='minor', bottom=False, left=False)
+    ax.tick_params(which='major', bottom=False, left=False)
+
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+
+    ax.set_title(f"Workout Consistency - {selected_year}", fontsize=13, pad=12)
+
+    fig.tight_layout()
+    st.pyplot(fig)
