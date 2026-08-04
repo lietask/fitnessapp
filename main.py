@@ -141,7 +141,7 @@ else:
     elif page == "Nutrition & Sleep":
         st.title("Daily Health Logs (Nutrition & Sleep)")
         
-        tab_nutr, tab_sleep, tab_summary = st.tabs(["🍎 Log Nutrition", "😴 Log Sleep", "📊 Daily Summary"])
+        tab_nutr, tab_sleep, tab_summary = st.tabs(["Log Nutrition", "Log Sleep", "Daily Summary"])
         
         with tab_nutr:
             st.header("Log Caloric & Macro Intake")
