@@ -1,1 +1,3 @@
-
+Date,Calories,Protein,Carbs,Fats,Time_asleep,Awake,REM,Core,Deep,Sleep_score,User
+,,,,,,,,,,,Default
+2026-08-04,2050.0,200.0,200.0,75.0,439.0,30.0,130.0,283.0,26.0,93.0,Default
