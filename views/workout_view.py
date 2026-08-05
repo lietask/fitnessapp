@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import datetime as dt
+from services.db_service import fetch_workouts, insert_workout
+
 
 WORKOUTS_CSV = 'data/workouts.csv'
 
@@ -30,35 +32,32 @@ def render_log_workout(current_user):
             if not ex_name.strip():
                 st.error("Please enter an exercise name.")
             else:
-                df_w = pd.read_csv(WORKOUTS_CSV)
                 new_rows = []
                 for i in range(sets):
-                    new_idx = len(df_w) + i
                     new_rows.append({
-                        'index': new_idx,
                         'date': str(workout_date),
                         'ex_name': ex_name.strip(),
-                        'SiaR': i + 1,
+                        'set_number': i + 1,
                         'reps': collection_sets[i][1],
                         'weight': collection_sets[i][0],
-                        'user': current_user
+                        'user_name': current_user
                     })
-                df_new = pd.DataFrame(new_rows)
-                df_w = pd.concat([df_w, df_new], ignore_index=True)
-                df_w.to_csv(WORKOUTS_CSV, index=False)
+
+                insert_workout(new_rows)
+
                 st.success(f"Logged {sets} sets of {ex_name} for {current_user} on {workout_date}!")
-                st.dataframe(df_new)
+                st.dataframe(pd.DataFrame(new_rows))
 
 def render_view_workout(current_user):
     st.title("Workout History")
 
-    df_w = pd.read_csv(WORKOUTS_CSV)
+    df_w = fetch_workouts(current_user)
     if df_w.empty:
         st.info("No workout data logged yet.")
     else:
         col1, col2, col3 = st.columns(3)
         with col1:
-            all_users = ['All'] + sorted(df_w['user'].dropna().astype(str).unique().tolist())
+            all_users = ['All'] + sorted(df_w['user_name'].dropna().astype(str).unique().tolist())
             user_filter = st.selectbox("Filter by User:", all_users,
                                        index=all_users.index(current_user) if current_user in all_users else 0)
         with col2:
@@ -69,7 +68,7 @@ def render_view_workout(current_user):
 
         filtered_df = df_w.copy()
         if user_filter != 'All':
-            filtered_df = filtered_df[filtered_df['user'] == user_filter]
+            filtered_df = filtered_df[filtered_df['user_name'] == user_filter]
         if ex_filter != 'All':
             filtered_df = filtered_df[filtered_df['ex_name'] == ex_filter]
         if date_range and len(date_range) == 2:
