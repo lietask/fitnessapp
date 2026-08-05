@@ -60,8 +60,8 @@ else:
 
     st.sidebar.divider()
     nav_options = ["Log Workout", "View Workouts", "Nutrition & Sleep", "Analytics & Heatmap"]
-    if current_user.strip().lower() == st.secrets('CYCLE_USER'):
-        nav_options.append("Cycle Tracking")
+    # if current_user.strip().lower() == st.secrets('CYCLE_USER'):
+    #     nav_options.append("Cycle Tracking")
 
     page = st.sidebar.radio("Navigation", nav_options)
 
