@@ -3,8 +3,6 @@ import pandas as pd
 import streamlit as st
 import datetime as dt
 import os
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
 
 from views.workout_view import render_log_workout, render_view_workout
 from views.nutrition_view import render_nutrition
@@ -37,6 +35,7 @@ else:
 st.set_page_config(page_title="Gym Tracker", layout="wide")
 
 if 'user_name' not in st.session_state or not st.session_state['user_name']:
+
     st.title("Gym tracker")
     st.subheader("Enter your Name. And keep it the same each time you log in.")
     
@@ -50,6 +49,7 @@ if 'user_name' not in st.session_state or not st.session_state['user_name']:
             else:
                 st.error("Please enter a valid name before proceeding.")
     st.stop()
+
 else:
     current_user = st.session_state['user_name']
 
@@ -66,9 +66,13 @@ else:
 
     if page == "Log Workout":
         render_log_workout(current_user)
+
     elif page == "View Workouts":
         render_view_workout(current_user)
+
     elif page == "Nutrition & Sleep":
         render_nutrition(current_user)
+
     elif page == "Analytics & Heatmap":
         render_analytics(current_user)
+
