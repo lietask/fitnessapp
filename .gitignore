@@ -223,3 +223,4 @@ __marimo__/
 # Ignore personal data
 data/*.csv
 *.csv
+.streamlit/secrets.toml
