@@ -1,0 +1,83 @@
+import pandas as pd
+import numpy as np
+import streamlit as st
+import datetime as dt
+
+DAILY_CSV = 'data/daily_logs.csv'
+
+def render_nutrition(current_user):
+    st.title("Daily Health Logs (Nutrition & Sleep)")
+
+    tab_nutr, tab_sleep, tab_summary = st.tabs(["Log Nutrition", "Log Sleep", "Daily Summary"])
+
+    with tab_nutr:
+        st.header("Log Caloric & Macro Intake")
+        with st.form('log_nutrition_form'):
+            n_date = st.date_input("Date", value=dt.date.today(), key='n_date')
+            calories = st.number_input("Calories (kcal)", min_value=0.0, format="%.0f")
+            protein = st.number_input("Protein (g)", min_value=0.0, format="%.1f")
+            carbs = st.number_input("Carbohydrates (g)", min_value=0.0, format="%.1f")
+            fats = st.number_input("Fats (g)", min_value=0.0, format="%.1f")
+
+            n_submitted = st.form_submit_button("Submit Nutrition", type="primary")
+            if n_submitted:
+                df_d = pd.read_csv(DAILY_CSV)
+                date_str = str(n_date)
+
+                mask = (df_d['Date'].astype(str) == date_str) & (df_d['User'] == current_user)
+                if mask.any():
+                    idx = df_d[mask].index[0]
+                    df_d.loc[idx, ['Calories', 'Protein', 'Carbs', 'Fats']] = [calories, protein, carbs, fats]
+                else:
+                    new_row = {
+                        'Date': date_str, 'User': current_user,
+                        'Calories': calories, 'Protein': protein, 'Carbs': carbs, 'Fats': fats,
+                        'Time_asleep': np.nan, 'Awake': np.nan, 'REM': np.nan, 'Core': np.nan, 'Deep': np.nan,
+                        'Sleep_score': np.nan
+                    }
+                    df_d = pd.concat([df_d, pd.DataFrame([new_row])], ignore_index=True)
+                df_d.to_csv(DAILY_CSV, index=False)
+                st.success(f"Logged nutrition for {current_user} on {date_str}!")
+
+    with tab_sleep:
+        st.header("Log Sleep Stats")
+        with st.form('log_sleep_form'):
+            s_date = st.date_input("Date", value=dt.date.today(), key='s_date')
+            time_asleep = st.number_input("Time Asleep (mins)", min_value=0.0)
+            awake = st.number_input("Awake (mins)", min_value=0.0)
+            rem = st.number_input("REM (mins)", min_value=0.0)
+            core = st.number_input("Core (mins)", min_value=0.0)
+            deep = st.number_input("Deep (mins)", min_value=0.0)
+            sleep_score = st.number_input("Sleep Score", min_value=0.0, max_value=100.0)
+
+            s_submitted = st.form_submit_button("Submit Sleep Stats", type="primary")
+            if s_submitted:
+                df_d = pd.read_csv(DAILY_CSV)
+                date_str = str(s_date)
+
+                mask = (df_d['Date'].astype(str) == date_str) & (df_d['User'] == current_user)
+                if mask.any():
+                    idx = df_d[mask].index[0]
+                    df_d.loc[idx, ['Time_asleep', 'Awake', 'REM', 'Core', 'Deep', 'Sleep_score']] = [
+                        time_asleep, awake, rem, core, deep, sleep_score
+                    ]
+                else:
+                    new_row = {
+                        'Date': date_str, 'User': current_user,
+                        'Calories': np.nan, 'Protein': np.nan, 'Carbs': np.nan, 'Fats': np.nan,
+                        'Time_asleep': time_asleep, 'Awake': awake, 'REM': rem, 'Core': core, 'Deep': deep,
+                        'Sleep_score': sleep_score
+                    }
+                    df_d = pd.concat([df_d, pd.DataFrame([new_row])], ignore_index=True)
+                df_d.to_csv(DAILY_CSV, index=False)
+                st.success(f"Logged sleep stats for {current_user} on {date_str}!")
+
+    with tab_summary:
+        st.header("Daily Health Summary Table")
+        df_d = pd.read_csv(DAILY_CSV)
+        user_opt = st.selectbox("Show logs for:", ["Current User (" + current_user + ")", "All Users"])
+        if user_opt.startswith("Current User"):
+            display_df = df_d[df_d['User'] == current_user]
+        else:
+            display_df = df_d
+        st.dataframe(display_df, use_container_width=True)
