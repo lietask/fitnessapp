@@ -5,12 +5,14 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
+from services.db_service import fetch_workouts
+
 WORKOUTS_CSV = 'data/workouts.csv'
 
 def render_analytics(current_user):
     st.title("Workout Analytics & Consistency")
 
-    df_w = pd.read_csv(WORKOUTS_CSV)
+    df_w = fetch_workouts(current_user)
     if df_w.empty:
         st.warning("No workout data available for analytics.")
     else:
@@ -25,12 +27,12 @@ def render_analytics(current_user):
                 st.warning(f"No records for {selected_ex}.")
             else:
                 ex_df['e1RM'] = ex_df['weight'] * (1 + (ex_df['reps'] / 30))
-                output_df = ex_df.groupby(['date', 'user'])['e1RM'].max().reset_index()
+                output_df = ex_df.groupby(['date', 'user_name'])['e1RM'].max().reset_index()
                 output_df['date'] = pd.to_datetime(output_df['date'])
 
                 fig, ax = plt.subplots(figsize=(10, 4))
-                for u in output_df['user'].unique():
-                    u_data = output_df[output_df['user'] == u].sort_values('date')
+                for u in output_df['user_name'].unique():
+                    u_data = output_df[output_df['user_name'] == u].sort_values('date')
                     ax.plot(u_data['date'], u_data['e1RM'], 'o-', label=f"{u} (e1RM)")
 
                 ax.set_title(f"Progression Overload - Estimated 1RM for {selected_ex}", fontsize=13)
@@ -49,13 +51,13 @@ def render_analytics(current_user):
                 selected_year = st.selectbox("Select Year:",
                                              available_years if available_years else [dt.datetime.now().year])
             with col2:
-                all_u = ['All Users'] + sorted(df_w['user'].dropna().astype(str).unique().tolist())
+                all_u = ['All Users'] + sorted(df_w['user_name'].dropna().astype(str).unique().tolist())
                 selected_user_hm = st.selectbox("Filter User:", all_u,
                                                 index=all_u.index(current_user) if current_user in all_u else 0)
 
             heatmap_df = df_w[df_w['date_dt'].dt.year == selected_year].copy()
             if selected_user_hm != 'All Users':
-                heatmap_df = heatmap_df[heatmap_df['user'] == selected_user_hm]
+                heatmap_df = heatmap_df[heatmap_df['user_name'] == selected_user_hm]
 
             workout_days = set(heatmap_df['date_dt'].dt.normalize())
 
