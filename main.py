@@ -59,10 +59,11 @@ else:
         st.rerun()
 
     st.sidebar.divider()
-    page = st.sidebar.radio(
-        "Navigation",
-        ["Log Workout", "View Workouts", "Nutrition & Sleep", "Analytics & Heatmap"]
-    )
+    nav_options = ["Log Workout", "View Workouts", "Nutrition & Sleep", "Analytics & Heatmap"]
+    if current_user.strip().lower() == st.secrets('CYCLE_USER'):
+        nav_options.append("Cycle Tracking")
+
+    page = st.sidebar.radio("Navigation", nav_options)
 
     if page == "Log Workout":
         render_log_workout(current_user)
@@ -76,3 +77,6 @@ else:
     elif page == "Analytics & Heatmap":
         render_analytics(current_user)
 
+    elif page == "Cycle Tracking":
+        st.subheader("Cycle Tracking")
+        st.info("This feature is under development. Stay tuned for updates!")
