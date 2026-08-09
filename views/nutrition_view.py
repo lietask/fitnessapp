@@ -5,8 +5,6 @@ import datetime as dt
 
 from services.db_service import fetch_daily_logs, upsert_daily_logs
 
-DAILY_CSV = 'data/daily_logs.csv'
-
 def render_nutrition(current_user):
     st.title("Daily Health Logs (Nutrition & Sleep)")
 

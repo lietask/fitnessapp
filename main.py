@@ -8,29 +8,6 @@ from views.workout_view import render_log_workout, render_view_workout
 from views.nutrition_view import render_nutrition
 from views.analytics_view import render_analytics
 
-WORKOUTS_CSV = 'data/workouts.csv'
-DAILY_CSV = 'data/daily_logs.csv'
-
-if os.path.exists(WORKOUTS_CSV):
-    df_workouts = pd.read_csv(WORKOUTS_CSV)
-    if 'user' not in df_workouts.columns:
-        df_workouts['user'] = 'Default'
-        df_workouts.to_csv(WORKOUTS_CSV, index=False)
-else:
-    df_workouts = pd.DataFrame(columns=['index', 'date', 'ex_name', 'SiaR', 'reps', 'weight', 'user'])
-    df_workouts.to_csv(WORKOUTS_CSV, index=False)
-
-if os.path.exists(DAILY_CSV):
-    df_daily = pd.read_csv(DAILY_CSV)
-    if 'User' not in df_daily.columns:
-        df_daily['User'] = 'Default'
-        df_daily.to_csv(DAILY_CSV, index=False)
-else:
-    df_daily = pd.DataFrame(columns=['Date', 'User', 'Calories', 'Protein', 'Carbs', 'Fats',
-                                     'Time_asleep', 'Awake', 'REM', 'Core', 'Deep', 'Sleep_score'])
-    df_daily.to_csv(DAILY_CSV, index=False)
-
-
 
 st.set_page_config(page_title="Gym Tracker", layout="wide")
 
@@ -60,8 +37,6 @@ else:
 
     st.sidebar.divider()
     nav_options = ["Log Workout", "View Workouts", "Nutrition & Sleep", "Analytics & Heatmap"]
-    # if current_user.strip().lower() == st.secrets('CYCLE_USER'):
-    #     nav_options.append("Cycle Tracking")
 
     page = st.sidebar.radio("Navigation", nav_options)
 
@@ -76,7 +51,3 @@ else:
 
     elif page == "Analytics & Heatmap":
         render_analytics(current_user)
-
-    elif page == "Cycle Tracking":
-        st.subheader("Cycle Tracking")
-        st.info("This feature is under development. Stay tuned for updates!")

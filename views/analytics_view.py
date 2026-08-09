@@ -7,8 +7,6 @@ import matplotlib.colors as mcolors
 
 from services.db_service import fetch_workouts
 
-WORKOUTS_CSV = 'data/workouts.csv'
-
 def render_analytics(current_user):
     st.title("Workout Analytics & Consistency")
 

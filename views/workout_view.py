@@ -5,8 +5,6 @@ import datetime as dt
 from services.db_service import fetch_workouts, insert_workout
 
 
-WORKOUTS_CSV = 'data/workouts.csv'
-
 def render_log_workout(current_user):
     st.title("Log a Workout")
     st.write(f"Logging as **{current_user}**")
