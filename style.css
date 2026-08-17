@@ -288,9 +288,12 @@ div[data-testid="stRadio"] label {
     transition: color 0.15s ease, background-color 0.15s ease;
 }
 
-div[data-testid="stRadio"] label:hover {
-    background: rgba(255, 255, 255, 0.04) !important;
-    color: #FFFFFF !important;
+div[data-testid="stRadio"] label:hover,
+div[data-testid="stRadio"] label:hover * {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: inherit !important;
+    box-shadow: none !important;
 }
 
 div[data-testid="stAlert"] {
