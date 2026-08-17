@@ -5,26 +5,74 @@ import datetime as dt
 from services.db_service import fetch_workouts, insert_workout
 
 
+def sync_set_1():
+    s1_w = st.session_state.get("weight_s1", 0.0)
+    s1_r = st.session_state.get("reps_s1", 0)
+    for i in range(2, 9):
+        st.session_state[f"weight_s{i}"] = s1_w
+        st.session_state[f"reps_s{i}"] = s1_r
+
+
 def render_log_workout(current_user):
     st.title("Log a Workout")
     st.write(f"Logging as **{current_user}**")
 
-    sets = st.selectbox("Number of sets", [1, 2, 3, 4, 5, 6, 7, 8])
-    with st.form('log_workout_form'):
-        ex_name = st.text_input("Exercise name", placeholder="e.g. Bench press")
-        workout_date = st.date_input("Date of exercise", value=dt.date.today())
+    for i in range(1, 9):
+        if f"weight_s{i}" not in st.session_state:
+            st.session_state[f"weight_s{i}"] = 0.0
+        if f"reps_s{i}" not in st.session_state:
+            st.session_state[f"reps_s{i}"] = 0
+
+    sets = st.selectbox("Number of sets", [1, 2, 3, 4, 5, 6, 7, 8], index=2)
+    
+    with st.container():
+        ex_name = st.text_input("Exercise name", placeholder="e.g. Bench press", key="ex_name_input")
+        workout_date = st.date_input("Date of exercise", value=dt.date.today(), key="workout_date_input")
 
         collection_sets = []
         for i in range(sets):
             st.write(f"**Set {i + 1}**")
             col_w, col_r = st.columns(2)
-            with col_w:
-                w = st.number_input("Weight (kg)", min_value=0.0, format="%.1f", key=f"weight_s{i + 1}", step=0.5)
-            with col_r:
-                r = st.number_input("Reps", min_value=0, format="%d", key=f"reps_s{i + 1}")
+            
+            if i == 0:
+                with col_w:
+                    w = st.number_input(
+                        "Weight (kg)", 
+                        min_value=0.0, 
+                        format="%.1f", 
+                        step=0.5, 
+                        key="weight_s1",
+                        on_change=sync_set_1
+                    )
+                with col_r:
+                    r = st.number_input(
+                        "Reps", 
+                        min_value=0, 
+                        format="%d", 
+                        step=1, 
+                        key="reps_s1",
+                        on_change=sync_set_1
+                    )
+            else:
+                with col_w:
+                    w = st.number_input(
+                        "Weight (kg)", 
+                        min_value=0.0, 
+                        format="%.1f", 
+                        step=0.5, 
+                        key=f"weight_s{i + 1}"
+                    )
+                with col_r:
+                    r = st.number_input(
+                        "Reps", 
+                        min_value=0, 
+                        format="%d", 
+                        step=1, 
+                        key=f"reps_s{i + 1}"
+                    )
             collection_sets.append([w, r])
 
-        submitted = st.form_submit_button(label='Submit Workout Log', type="primary")
+        submitted = st.button("Submit Workout Log", type="primary", use_container_width=True)
 
         if submitted:
             if not ex_name.strip():
@@ -44,7 +92,7 @@ def render_log_workout(current_user):
                 insert_workout(new_rows)
 
                 st.success(f"Logged {sets} sets of {ex_name} for {current_user} on {workout_date}!")
-                st.dataframe(pd.DataFrame(new_rows))
+                st.dataframe(pd.DataFrame(new_rows), use_container_width=True)
 
 def render_view_workout(current_user):
     st.title("Workout History")
