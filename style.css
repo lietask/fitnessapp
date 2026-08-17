@@ -1,0 +1,111 @@
+/* ==========================================================================
+   Gym Tracker - Modern Fitness Styling
+   ========================================================================== */
+
+/* Main Container & Page Padding */
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+    max-width: 1200px;
+}
+
+/* Typography & Headings */
+h1 {
+    font-weight: 700 !important;
+    letter-spacing: -0.8px;
+    margin-bottom: 0.8rem;
+}
+
+h2, h3 {
+    font-weight: 600 !important;
+    letter-spacing: -0.4px;
+}
+
+/* Primary & Secondary Buttons */
+.stButton > button {
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 75, 75, 0.25);
+}
+
+.stButton > button:active {
+    transform: translateY(0);
+}
+
+/* Form Submit Buttons */
+div[data-testid="stFormSubmitButton"] > button {
+    border-radius: 10px;
+    font-weight: 600;
+    width: 100%;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.2s ease;
+}
+
+div[data-testid="stFormSubmitButton"] > button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(255, 75, 75, 0.35);
+}
+
+/* Metric Cards */
+div[data-testid="stMetric"] {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 18px 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+div[data-testid="stMetric"]:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 75, 75, 0.3);
+}
+
+div[data-testid="stMetricLabel"] {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: rgba(250, 250, 250, 0.7);
+}
+
+div[data-testid="stMetricValue"] {
+    font-weight: 700;
+}
+
+/* Input Fields & Selectboxes */
+div[data-baseweb="input"], 
+div[data-baseweb="select"] {
+    border-radius: 8px !important;
+}
+
+/* Modern Tab Styling */
+div[data-testid="stTabs"] button[role="tab"] {
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 10px 18px;
+    border-radius: 8px 8px 0 0;
+    transition: color 0.2s ease;
+}
+
+div[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
+    color: #FF4B4B !important;
+}
+
+/* Tables & DataFrames */
+div[data-testid="stDataFrame"] {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Sidebar Custom Styling */
+section[data-testid="stSidebar"] {
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
