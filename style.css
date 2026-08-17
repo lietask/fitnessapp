@@ -24,7 +24,6 @@ html, body, [data-testid="stAppViewContainer"], .stMarkdown, p, input, select, t
     font-family: var(--font-main);
 }
 
-/* Explicitly preserve Streamlit & Material icon fonts */
 [data-testid="stIconMaterial"],
 [data-testid="collapsedControl"],
 [data-testid="stSidebarCollapseButton"],
@@ -36,7 +35,6 @@ i {
     font-family: 'Material Symbols Rounded', 'Material Symbols Outlined', 'Material Icons' !important;
 }
 
-/* Page Layout & Container */
 .block-container {
     padding-top: 2rem !important;
     padding-bottom: 4rem !important;
@@ -55,10 +53,6 @@ i {
     }
 }
 
-/* ==========================================================================
-   Typography & Headers
-   ========================================================================== */
-
 h1 {
     font-weight: 800 !important;
     letter-spacing: -1px !important;
@@ -74,17 +68,11 @@ h2, h3 {
     color: #F0F6FC !important;
 }
 
-/* Custom Subtitles */
 .stMarkdown p {
     line-height: 1.6;
     color: #94A3B8;
 }
 
-/* ==========================================================================
-   Buttons & Micro-interactions
-   ========================================================================== */
-
-/* Primary Action Buttons */
 .stButton > button[kind="primary"], 
 div[data-testid="stFormSubmitButton"] > button {
     background: var(--primary-gradient) !important;
@@ -110,7 +98,6 @@ div[data-testid="stFormSubmitButton"] > button:active {
     transform: translateY(0) !important;
 }
 
-/* Secondary & Standard Buttons */
 .stButton > button[kind="secondary"],
 .stButton > button:not([kind="primary"]) {
     background: rgba(255, 255, 255, 0.05) !important;
@@ -128,11 +115,6 @@ div[data-testid="stFormSubmitButton"] > button:active {
     transform: translateY(-1px) !important;
 }
 
-/* ==========================================================================
-   Card & Container Glassmorphism
-   ========================================================================== */
-
-/* Metric Cards */
 div[data-testid="stMetric"] {
     background: var(--bg-card) !important;
     backdrop-filter: blur(16px) !important;
@@ -177,7 +159,6 @@ div[data-testid="stMetricValue"] {
     color: #FFFFFF !important;
 }
 
-/* Forms & Containers */
 div[data-testid="stForm"] {
     background: var(--bg-card);
     backdrop-filter: blur(16px);
@@ -187,11 +168,6 @@ div[data-testid="stForm"] {
     box-shadow: var(--shadow-subtle);
 }
 
-/* ==========================================================================
-   Form Inputs, Selectboxes & Sliders
-   ========================================================================== */
-
-/* Outer input containers */
 div[data-testid="stTextInput"] div[data-baseweb="input"],
 div[data-testid="stDateInput"] div[data-baseweb="input"],
 div[data-testid="stNumberInputContainer"],
@@ -211,7 +187,6 @@ div[data-baseweb="select"] > div:focus-within {
     box-shadow: 0 0 0 3px rgba(255, 75, 75, 0.25) !important;
 }
 
-/* Strip all backgrounds, borders, and radii from internal elements inside Number Input */
 div[data-testid="stNumberInput"] div[data-baseweb="input"],
 div[data-testid="stNumberInput"] [data-baseweb="base-input"],
 div[data-testid="stNumberInputContainer"] div[data-baseweb="input"],
@@ -232,10 +207,6 @@ input {
     color: #F8FAFC !important;
     font-weight: 500 !important;
 }
-
-/* ==========================================================================
-   Modern Segmented Tabs
-   ========================================================================== */
 
 div[data-testid="stTabs"] {
     margin-top: 1rem;
@@ -272,20 +243,12 @@ div[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
     border: 1px solid rgba(255, 75, 75, 0.3) !important;
 }
 
-/* ==========================================================================
-   DataFrames & Tables
-   ========================================================================== */
-
 div[data-testid="stDataFrame"] {
     border: 1px solid var(--border-color) !important;
     border-radius: 14px !important;
     overflow: hidden !important;
     box-shadow: var(--shadow-subtle) !important;
 }
-
-/* ==========================================================================
-   Sidebar Styling & Navigation
-   ========================================================================== */
 
 section[data-testid="stSidebar"] {
     background-color: #0A0D12 !important;
@@ -296,7 +259,6 @@ section[data-testid="stSidebar"] .block-container {
     padding-top: 2rem !important;
 }
 
-/* Ensure all sidebar buttons have identical uniform full-width size */
 section[data-testid="stSidebar"] .stButton {
     width: 100% !important;
 }
@@ -313,7 +275,6 @@ section[data-testid="stSidebar"] .stButton > button {
     font-weight: 600 !important;
 }
 
-/* Clean Sidebar Navigation (Natural Menu List, Not Buttons) */
 div[data-testid="stRadio"] > div[role="radiogroup"] {
     gap: 4px;
 }
@@ -332,14 +293,12 @@ div[data-testid="stRadio"] label:hover {
     color: #FFFFFF !important;
 }
 
-/* Alerts and Banners */
 div[data-testid="stAlert"] {
     border-radius: 12px !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     backdrop-filter: blur(12px) !important;
 }
 
-/* Custom Slim Scrollbars */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -358,11 +317,9 @@ div[data-testid="stAlert"] {
     background: rgba(255, 75, 75, 0.5);
 }
 
-/* Style both + and - buttons */
 button[data-testid="stNumberInputStepDown"],
 button[data-testid="stNumberInputStepUp"] {
     background-color: rgba(255, 255, 255, 0.08) !important;
     color: #FFFFFF !important;
     border-radius: 0px !important;
 }
-
