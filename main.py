@@ -11,6 +11,14 @@ from views.analytics_view import render_analytics
 
 st.set_page_config(page_title="Gym Tracker", layout="wide")
 
+def load_css(file_name: str = "style.css"):
+    css_path = os.path.join(os.path.dirname(__file__), file_name)
+    if os.path.exists(css_path):
+        with open(css_path, "r") as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+load_css("style.css")
+
 if 'user_name' not in st.session_state or not st.session_state['user_name']:
 
     st.title("Gym tracker")

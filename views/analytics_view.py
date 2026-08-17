@@ -8,12 +8,30 @@ import matplotlib.colors as mcolors
 from services.db_service import fetch_workouts
 
 def render_analytics(current_user):
-    st.title("Workout Analytics & Consistency")
-
     df_w = fetch_workouts(current_user)
     if df_w.empty:
         st.warning("No workout data available for analytics.")
     else:
+        st.title("Weight suggestion")
+        st.write("Based on your workout history, here are some weight suggestions for each exercise.")
+        col1, col2 = st.columns(2)
+        with col1:
+            selected_exercise = st.selectbox("Select Exercise:", sorted(df_w['ex_name'].dropna().unique().tolist()))
+        with col2:
+            selected_advice = st.selectbox('Select Suggestion for:', ['For me', 'Hypertrophy', 'Strength'])
+            if selected_advice == 'For me':
+                avg = round(df_w[df_w['ex_name'] == selected_exercise]['reps'].mean())
+            elif selected_advice == 'Hypertrophy':
+                avg = 8
+            elif selected_advice == 'Strength':
+                avg = 4
+        onerm_df = df_w[df_w['ex_name'] == selected_exercise].copy()
+        onerm_df['e1RM'] = onerm_df['weight'] * (1 + (onerm_df['reps'] / 30))
+        avg_1erm = onerm_df['e1RM'].iloc[-5:].mean()
+        suggested_weight = avg_1erm * ((37 - avg) / 36)
+        st.write('Suggested Weight:', f'{suggested_weight:.1f} for {avg} reps')
+
+        st.title("Workout Analytics & Consistency")
         chart_selection = st.selectbox('Select Chart View:', ['Consistency Heatmap', 'Progression Overload Curve'])
 
         if chart_selection == 'Progression Overload Curve':
@@ -64,7 +82,7 @@ def render_analytics(current_user):
             year_dates = pd.date_range(start_date, end_date, freq='D')
 
             first_monday = start_date - pd.Timedelta(days=start_date.dayofweek)
-            num_weeks = ((end_date - first_monday).days // 7) + 1
+            num_weeks = int((end_date - first_monday).days // 7) + 1
 
             grid = np.full((7, num_weeks), np.nan)
             for d in year_dates:
