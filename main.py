@@ -11,13 +11,33 @@ from views.analytics_view import render_analytics
 
 st.set_page_config(page_title="Gym Tracker", layout="wide")
 
+import streamlit.components.v1 as components
+
 def load_css(file_name: str = "style.css"):
     css_path = os.path.join(os.path.dirname(__file__), file_name)
     if os.path.exists(css_path):
         with open(css_path, "r") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
+def inject_js():
+    # Injects client-side keyboard shortcuts and micro-interactions
+    components.html("""
+        <script>
+        const doc = window.parent.document;
+        doc.addEventListener('keydown', function(e) {
+            // Cmd+Enter or Ctrl+Enter to quickly submit active forms
+            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                const submitBtn = doc.querySelector('div[data-testid="stFormSubmitButton"] button');
+                if (submitBtn) {
+                    submitBtn.click();
+                }
+            }
+        });
+        </script>
+    """, height=0)
+
 load_css("style.css")
+inject_js()
 
 if 'user_name' not in st.session_state or not st.session_state['user_name']:
 
@@ -39,7 +59,7 @@ else:
     current_user = st.session_state['user_name']
 
     st.sidebar.markdown(f"### 👤 User: **{current_user}**")
-    if st.sidebar.button("Switch User / Logout"):
+    if st.sidebar.button("Switch User / Logout", use_container_width=True):
         st.session_state['user_name'] = None
         st.rerun()
 

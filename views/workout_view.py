@@ -19,7 +19,7 @@ def render_log_workout(current_user):
             st.write(f"**Set {i + 1}**")
             col_w, col_r = st.columns(2)
             with col_w:
-                w = st.number_input("Weight (kg)", min_value=0.0, format="%.1f", key=f"weight_s{i + 1}")
+                w = st.number_input("Weight (kg)", min_value=0.0, format="%.1f", key=f"weight_s{i + 1}", step=0.5)
             with col_r:
                 r = st.number_input("Reps", min_value=0, format="%d", key=f"reps_s{i + 1}")
             collection_sets.append([w, r])

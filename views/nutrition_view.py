@@ -14,10 +14,10 @@ def render_nutrition(current_user):
         st.header("Log Caloric & Macro Intake")
         with st.form('log_nutrition_form'):
             n_date = st.date_input("Date", value=dt.date.today(), key='n_date')
-            calories = st.number_input("Calories (kcal)", min_value=0.0, format="%.0f")
-            protein = st.number_input("Protein (g)", min_value=0.0, format="%.1f")
-            carbs = st.number_input("Carbohydrates (g)", min_value=0.0, format="%.1f")
-            fats = st.number_input("Fats (g)", min_value=0.0, format="%.1f")
+            calories = st.number_input("Calories (kcal)", min_value=0.0, format="%.0f", step=1.0)
+            protein = st.number_input("Protein (g)", min_value=0.0, format="%.1f", step=1.0)
+            carbs = st.number_input("Carbohydrates (g)", min_value=0.0, format="%.1f", step=1.0)
+            fats = st.number_input("Fats (g)", min_value=0.0, format="%.1f", step=1.0)
 
             n_submitted = st.form_submit_button("Submit Nutrition", type="primary")
             if n_submitted:
