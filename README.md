@@ -1,55 +1,26 @@
 # Gym Tracker
 
-Gym Tracker is a centralized fitness analytics, nutrition monitoring, and sleep tracking web application. Built on Streamlit and backed by Supabase PostgreSQL, the platform provides automated set synchronization, progressive overload telemetry, algorithmic load suggestions, and workout consistency visualization.
+Gym Tracker is a Streamlit app for logging workouts, nutrition, and sleep. It uses Supabase (PostgreSQL) for storage and turns workout logs into strength trends and a training calendar with pandas, NumPy, and Matplotlib.
 
----
+## Logging and history
 
-## Architecture and Core Capabilities
+- Log one to eight sets per exercise. The first set can prefill weight and reps for the remaining sets. Filter workout history by user, exercise, and date range.
+- Record daily calories, protein, carbohydrates, and fat, as well as sleep duration, stages, and quality score. Nutrition and sleep entries use the date and username as the upsert key, so saving again updates that day's entry.
 
-### Workout Logging and History
-* **Set Synchronization Engine**: Allows logging between 1 and 8 sets per exercise. Updating the primary set (Set 1) automatically synchronizes load and repetition fields across all subsequent sets.
-* **Rapid Form Submission**: Supports hotkey form submission (`Cmd + Enter` / `Ctrl + Enter`) via client-side DOM event listeners.
-* **Historical Audit and Filtering**: Multi-parameter query interface supporting filtering across usernames, exercise classifications, and date ranges.
+## Workout analytics
 
-### Health Telemetry: Nutrition and Sleep
-* **Macronutrient Tracking**: Records daily caloric intake alongside macronutrient breakdowns (protein, carbohydrates, and dietary fats).
-* **Sleep Architecture Logging**: Captures total time asleep, awake periods, sleep stage distribution (REM, Core, Deep), and composite sleep quality scores.
-* **Idempotent Storage**: Implements composite unique key constraints (`date, user_name`) with database-level upserts to prevent duplicate daily telemetry.
+- **Strength over time.** For an exercise, the app estimates one-rep max for each set as `weight × (1 + reps / 30)`, then plots the highest estimate for each user and date.
+- **Training consistency.** A calendar heatmap marks days with at least one logged workout. Filter it by year and user.
+- **Working-weight suggestions.** For the selected exercise, the app averages estimated one-rep max across up to five set records from the end of the filtered workout data. It uses that average to suggest a weight for eight reps (hypertrophy), four reps (strength), or the rounded average rep count for the exercise (For me). Multiple sets from the same day can contribute to the average.
 
-### Analytics and Load Prescriptions
-* **Estimated One-Rep Max (e1RM)**: Uses empirical strength formulations to calculate maximum single-repetition capacity from multi-rep historical data.
-* **Load Prescriptions**: Derives target working weights based on rolling five-session average e1RM for hypertrophy (8 reps), maximal strength (4 reps), or customized rep goals.
-* **Progressive Overload Telemetry**: Time-series charts visualizing volume and e1RM trajectory per exercise.
-* **Calendar Consistency Matrix**: Year-long contribution matrix displaying workout frequency and scheduling consistency.
+## Project structure
 
-### Data Layer Resilience
-* **Transient Fault Recovery**: Built-in exception handling that detects connection interruptions, network timeouts, and protocol errors, automatically re-establishing the database client session.
-
----
-
-## Technical Specifications
-
-| Category | Component / Tool |
-| :--- | :--- |
-| **Application Framework** | Streamlit |
-| **Database** | PostgreSQL via Supabase |
-| **Scientific Computing** | NumPy, Pandas |
-| **Data Visualization** | Matplotlib |
-| **Interface Styling** | Custom CSS, CSS Grid/Flexbox, JavaScript injections |
-| **Runtime Environment** | Python 3.9+ |
-
----
-
-## Repository Structure
-
-```text
-fitnessapp/
-├── main.py                 # Application entrypoint, session routing, and authentication
-├── style.css               # Application stylesheet and typography definitions
-├── requirements.txt        # Runtime dependency manifest
-├── services/
-│   └── db_service.py       # Supabase client management, query operations, and retry logic
-└── views/
-    ├── workout_view.py     # Workout capture forms and history query interface
-    ├── nutrition_view.py   # Nutrition and sleep metrics management
-    └── analytics_view.py   # Statistical modeling, load suggestions, and visualizations
+| File | Purpose |
+| --- | --- |
+| [main.py](main.py) | Streamlit entry point and navigation |
+| [services/db_service.py](services/db_service.py) | Supabase queries and connection recovery |
+| [views/workout_view.py](views/workout_view.py) | Workout logging and history |
+| [views/nutrition_view.py](views/nutrition_view.py) | Nutrition and sleep logging |
+| [views/analytics_view.py](views/analytics_view.py) | Metric calculations, weight suggestions, and charts |
+| [requirements.txt](requirements.txt) | Python dependencies |
+| [style.css](style.css) | Interface styling |
